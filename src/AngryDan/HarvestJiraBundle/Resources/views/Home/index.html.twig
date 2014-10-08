@@ -1,0 +1,95 @@
+{% extends "HarvestJiraBundle::layout.html.twig" %}
+
+{% block head %}
+    <style>
+        .notes {
+            height: 29.4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+{% endblock %}
+
+{% block title timestamp|date('j F Y') %}
+{% block pageTitle %}
+    {{ timestamp | date('l') }} <small>{{ timestamp | date('j F Y') }}</small>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-6 text-left">
+            <p>
+                <a href="{{ path('_home', {'timestamp': yesterday}) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span><span class="sr-only">Backwards</span>
+                </a>
+            </p>
+        </div>
+        <div class="col-xs-6 text-right">
+            <p>
+                <a href="{{ path('_home', {'timestamp': tomorrow}) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-right"></span><span class="sr-only">Forward</span>
+                </a>
+            </p>
+        </div>
+    </div>
+
+    {% if entries %}
+        {% for entry in entries %}
+            <div class="row">
+
+                <div class="col-sm-4">
+                    <p class="lead">
+                        {% if entry.id %}
+                            {% if not entry.id_exists %}
+                                <span class="glyphicon glyphicon-exclamation-sign" title="Issue not found in JIRA"></span>
+                            {% endif %}
+                            <a href="https://deeson.atlassian.net/browse/{{ entry.id }}" target="_blank">{{ entry.id }}</a>
+                        {% else %}
+                            <small>No JIRA issue</small>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-sm-5">
+                    {% if entry.id %}
+                        <p class="notes">{{ entry.notes }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-sm-3">
+                    <p class="lead">
+                        {{ entry.timeSpent }}
+                        {% if entry.id_exists and entry.unloggedTime %}
+                            <a href="{{path('_sync', {'id': entry.id, 'timestamp': timestamp})}}" class="btn btn-primary">Sync {{ entry.unloggedTime }} to JIRA</a>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+<table class="table">
+
+                {% for log in entry.logs %}
+                    <tr>
+                        <td>
+                            <p>{{ log.notes }}</p>
+                            <small class="text-muted">{{ log.client }} / {{ log.project }}</small>
+                        </td>
+                        <td>{{ log.timeSpent }}</td>
+                    </tr>
+                {% endfor %}
+</table>
+
+
+            {% endfor %}
+
+    {% else %}
+        <strong>No Harvest entries for this day exist yet.</strong>
+    {% endif %}
+
+
+    <footer>
+        <p>
+            {{ harvestTotal }} logged in Harvest, {{ jiraTotal }} logged in JIRA<br />
+            {{ percentInSync }} of Harvest time is synched to JIRA.
+        </p>
+    </footer>
+
+{% endblock %}

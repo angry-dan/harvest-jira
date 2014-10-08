@@ -1,0 +1,21 @@
+_login:
+    path: /harvest-jira/login
+    defaults:
+      _controller: HarvestJiraBundle:Home:login
+
+_logout:
+    path: /harvest-jira/logout
+    defaults:
+      _controller: HarvestJiraBundle:Home:logout
+
+_sync:
+    path: /harvest-jira/sync/{id}/{timestamp}
+    defaults:
+      _controller: HarvestJiraBundle:Home:sync
+      timestamp: ""
+
+_home:
+    path: /harvest-jira/{timestamp}
+    defaults:
+      _controller: HarvestJiraBundle:Home:index
+      timestamp: ""

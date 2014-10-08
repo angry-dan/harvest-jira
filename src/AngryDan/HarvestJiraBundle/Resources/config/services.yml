@@ -1,0 +1,29 @@
+services:
+  harvest_api:
+    class: AngryDan\HarvestJiraBundle\Sync\Harvest\Api
+    calls:
+        - [setAuthenticationHelper, ['@harvest_jira.harvest.authentication_helper']]
+        - [setAccount, ["deesonemedia"]]
+
+  harvest_jira.harvest:
+    class: AngryDan\HarvestJiraBundle\Sync\Harvest
+    arguments: ["@harvest_api"]
+
+  harvest_jira.harvest.authentication_helper:
+    class: AngryDan\HarvestJiraBundle\Sync\Harvest\AuthenticationHelper
+    arguments: ["@session"]
+
+  harvest_jira.jira:
+    class: AngryDan\HarvestJiraBundle\Sync\Jira
+    arguments: ["@jira_api.issue"]
+    calls:
+      - [setWorklog, ["@jira_api.worklog"]]
+
+  harvest_jira.jira.authentication_helper:
+    class: AngryDan\HarvestJiraBundle\Sync\Jira\AuthenticationHelper
+    arguments: ["@session"]
+
+
+  jira_api.worklog:
+    class: AngryDan\HarvestJiraBundle\Sync\Jira\WorklogService
+    arguments: ["@jira_api.rest_client"]

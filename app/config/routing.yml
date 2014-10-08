@@ -1,0 +1,2 @@
+_harvest_jira:
+  resource: "@HarvestJiraBundle/Resources/config/routing.yml"
